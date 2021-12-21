@@ -1,10 +1,12 @@
+// import 'package:pikunikku/sources/api/url.dart';
+
 class User {
     User({
         required this.id,
         required this.nama,
         required this.noHp,
         required this.email,
-        required this.emailVerifiedAt,
+        // required this.emailVerifiedAt,
         required this.password,
         required this.createdAt,
         required this.updatedAt,
@@ -16,17 +18,17 @@ class User {
         required this.jenisKelamin,
         required this.picture,
         required this.pikunikkuPoint,
-        required this.influencer,
-        required this.referral,
-        required this.noRekening,
-        required this.influenceReferral,
+        // required this.influencer,
+        // required this.referral,
+        // required this.noRekening,
+        // required this.influenceReferral,
     });
 
     int id;
     String nama;
     String noHp;
     String email;
-    DateTime emailVerifiedAt;
+    // DateTime emailVerifiedAt;
     String password;
     DateTime createdAt;
     DateTime updatedAt;
@@ -37,18 +39,18 @@ class User {
     DateTime tglLahir;
     String jenisKelamin;
     String picture;
-    dynamic pikunikkuPoint;
-    String influencer;
-    String referral;
-    String noRekening;
-    dynamic influenceReferral;
+    int pikunikkuPoint;
+    // String influencer;
+    // String referral;
+    // String noRekening;
+    // dynamic influenceReferral;
 
     factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
         nama: json["nama"],
         noHp: json["no_hp"],
         email: json["email"],
-        emailVerifiedAt: DateTime.parse(json["email_verified_at"]),
+        // emailVerifiedAt: DateTime.parse(json["email_verified_at"]),
         password: json["password"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
@@ -58,12 +60,12 @@ class User {
         kodePos: json["kode_pos"],
         tglLahir: DateTime.parse(json["tgl_lahir"]),
         jenisKelamin: json["jenis_kelamin"],
-        picture: json["picture"],
-        pikunikkuPoint: json["pikunikku_point"],
-        influencer: json["influencer"],
-        referral: json["referral"],
-        noRekening: json["no_rekening"],
-        influenceReferral: json["influence_referral"],
+        picture: json["picture"]??"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+        pikunikkuPoint: json["pikunikku_point"]??0,
+        // influencer: json["influencer"],
+        // referral: json["referral"],
+        // noRekening: json["no_rekening"],
+        // influenceReferral: json["influence_referral"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -71,7 +73,7 @@ class User {
         "nama": nama,
         "no_hp": noHp,
         "email": email,
-        "email_verified_at": emailVerifiedAt.toIso8601String(),
+        // "email_verified_at": emailVerifiedAt.toIso8601String(),
         "password": password,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
@@ -83,9 +85,9 @@ class User {
         "jenis_kelamin": jenisKelamin,
         "picture": picture,
         "pikunikku_point": pikunikkuPoint,
-        "influencer": influencer,
-        "referral": referral,
-        "no_rekening": noRekening,
-        "influence_referral": influenceReferral,
+        // "influencer": influencer,
+        // "referral": referral,
+        // "no_rekening": noRekening,
+        // "influence_referral": influenceReferral,
     };
 }

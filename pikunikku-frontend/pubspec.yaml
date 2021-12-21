@@ -26,12 +26,25 @@ dependencies:
   http: ^0.13.4
   rxdart: ^0.27.3
   hive: ^2.0.4
-  path_provider: ^2.0.7
+  path_provider: ^2.0.8
   shared_preferences: ^2.0.9
   flutter_bloc: ^8.0.0
   equatable: ^2.0.3
   json_annotation: ^4.4.0
   ndialog: ^4.1.0
+  intl: ^0.17.0
+  flutter_svg: ^1.0.0
+  image_picker_gallery_camera: ^0.2.2
+  dio: ^4.0.4
+  carousel_pro_nullsafety: ^1.0.2
+  syncfusion_flutter_pdfviewer: ^19.4.38-beta
+  internet_file: ^1.0.0+1
+  image_cropper: ^1.4.1
+  flutter_downloader: ^1.7.1
+  permission_handler: ^8.3.0
+  file_picker: ^4.3.0
+  dotted_border: ^2.0.0+2
+  sentry_flutter: ^6.2.2
 
 
 
@@ -58,6 +71,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/svg/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
