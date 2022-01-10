@@ -6,7 +6,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:pikunikku/cubit/paket/paket_cubit.dart';
+// import 'package:pikunikku/cubit/paket/paket_cubit.dart';
 // import 'package:pdfdownload/pdfdownload.dart';
 import 'package:pikunikku/cubit/tour/tour_cubit.dart';
 import 'package:pikunikku/pages/tour_detail/screen/itinerary.dart';
@@ -34,22 +34,28 @@ class _TourDetailState extends State<TourDetail> {
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width * 0.85,
             height: 50,
-            child: state.singleTour!.availableSeat != 0
+            child: state.selectedListPaket!.length != 0 &&
+                    state.selectedListPaket != null
                 ? Text("Pesan Sekarang")
                 : Text("Tidak Tersedia"),
           ),
           style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(
+                state.selectedListPaket!.length != 0 &&
+                        state.selectedListPaket != null
+                    ? Colors.white.withOpacity(0.3)
+                    : Colors.transparent),
             backgroundColor: MaterialStateProperty.all(
-                state.singleTour!.availableSeat != 0
+                state.selectedListPaket!.length != 0 &&
+                        state.selectedListPaket != null
                     ? Color(0xff00adef)
                     : Colors.grey),
             shadowColor: MaterialStateProperty.all(Colors.black),
           ),
           onPressed: () {
-            if(state.singleTour!.availableSeat!=0){
-              context
-                .read<PaketCubit>()
-                .showFilterPaket(state.singleTour!.id.toString(), context);
+            if (state.selectedListPaket!.length != 0 &&
+                state.selectedListPaket != null) {
+              context.read<TourCubit>().showFilterPaket(context);
             }
           },
         ),
@@ -62,12 +68,13 @@ class _TourDetailState extends State<TourDetail> {
                   width: MediaQuery.of(context).size.width,
                   child: Carousel(
                     autoplay: false,
-                    
                     dotVerticalPadding: 15,
                     dotBgColor: Colors.transparent,
                     dotIncreasedColor: Color(0xff00adef),
                     images: List.from(
-                      json.decode(state.singleTour!.pict.toString()).map(
+                      json
+                          .decode(state.singleTour!.pict.toString())
+                          .map(
                             (item) => Container(
                               child: Center(
                                 child: Image.network(
@@ -77,7 +84,8 @@ class _TourDetailState extends State<TourDetail> {
                                 ),
                               ),
                             ),
-                          ).take(8),
+                          )
+                          .take(8),
                     ),
                   ),
                 ),
@@ -108,10 +116,30 @@ class _TourDetailState extends State<TourDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      state.singleTour!.name.toString(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            state.singleTour!.name.toString(),
+                            style:
+                                TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.star,
+                                color: Colors.orange.withOpacity(0.7),
+                                size: 35),
+                            Text(
+                              "5.0",
+                              style: TextStyle(
+                                  color: Colors.orange.withOpacity(0.7),
+                                  fontSize: 25),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     SizedBox(height: 10),
                     Row(
@@ -129,106 +157,76 @@ class _TourDetailState extends State<TourDetail> {
                     SizedBox(height: 20),
                     Row(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.star,
-                                color: Colors.orange.withOpacity(0.7),
-                                size: 30),
-                            Text(
-                              "5.0",
-                              style: TextStyle(
-                                  color: Colors.orange.withOpacity(0.7),
-                                  fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 40,
-                          child: VerticalDivider(
-                            color: Color(0xff00adef),
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.date_range, size: 15),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  DateFormat("dd MMMM yyyy").format(
-                                      state.singleTour!.deparatureTime!),
-                                  style: TextStyle(fontSize: 11),
-                                  maxLines: 2,
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Icon(Icons.access_time, size: 15),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  state.singleTour!.duration.toString(),
-                                  style: TextStyle(fontSize: 11),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 40,
-                          child: VerticalDivider(
-                            color: Color(0xff00adef),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Icon(Icons.date_range,color: Color(0xff00adef)),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                DateFormat("dd MMMM yyyy")
+                                    .format(state.singleTour!.deparatureTime!),
+                                style: TextStyle(fontWeight: FontWeight.w300),
+                                maxLines: 2,
+                              )
+                            ],
                           ),
                         ),
                         Expanded(
-                          child: Text(
-                            "Rp " +
-                                state.singleTour!.price.toString() +
-                                " /pax",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                          child: Row(
+                            children: [
+                              Icon(Icons.access_time,color: Color(0xff00adef)),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                state.singleTour!.duration.toString(),
+                                style: TextStyle(fontWeight: FontWeight.w300)
+                              )
+                            ],
                           ),
-                        )
+                        ),
                       ],
                     ),
-                    Divider(
-                      color: Color(0xff00adef),
+                    SizedBox(
+                      height: 10,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.confirmation_num,
-                              color: Color(0xff00adef),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                                (state.singleTour!.availableSeat != null
-                                        ? state.singleTour!.availableSeat
-                                            .toString()
-                                        : "0") +
-                                    " yang tersedia",
-                                style: TextStyle(fontWeight: FontWeight.w300)),
-                          ],
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.confirmation_num,
+                                color: Color(0xff00adef),
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                  (state.selectedListPaket != null
+                                          ? state.selectedListPaket!.length
+                                              .toString()
+                                          : "0") +
+                                      " paket tersedia",
+                                  style: TextStyle(fontWeight: FontWeight.w300)),
+                            ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.call,
-                              color: Color(0xff00adef),
-                            ),
-                            SizedBox(width: 5),
-                            Text("+62 81 1900 4221 (Admin Pikunikku)",
-                                style: TextStyle(fontWeight: FontWeight.w300))
-                          ],
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.call,
+                                color: Color(0xff00adef),
+                              ),
+                              SizedBox(width: 5),
+                              Flexible(
+                                child: Text("+62 81 1900 4221 (Admin Pikunikku)",
+                                    style: TextStyle(fontWeight: FontWeight.w300)),
+                              )
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -249,8 +247,10 @@ class _TourDetailState extends State<TourDetail> {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     PreparationList(
-                      preparationList: List<String>.from(
-                          state.singleTour!.metaData!.feature!.toList()),
+                      preparationList: List<String>.from(state
+                          .singleTour!.metaData!.feature!
+                          .where((element) => element != null)
+                          .toList()),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -348,7 +348,9 @@ class _TourDetailState extends State<TourDetail> {
                         width: MediaQuery.of(context).size.width,
                         child: DottedBorder(
                           color: Colors.grey,
-                          child: Center(child: Text("Terms & Conditions", style: TextStyle(color: Colors.grey))),
+                          child: Center(
+                              child: Text("Terms & Conditions",
+                                  style: TextStyle(color: Colors.grey))),
                         ),
                       ),
                       onPressed: () {},

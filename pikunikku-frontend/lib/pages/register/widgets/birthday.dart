@@ -5,7 +5,9 @@ import 'package:pikunikku/cubit/register/register_cubit.dart';
 import 'package:pikunikku/pages/register/style.dart';
 
 class Birthday extends StatelessWidget {
-  const Birthday({Key? key}) : super(key: key);
+  final FocusNode? focusName;
+  final FocusNode? focusPhone;
+  const Birthday({Key? key,this.focusName,this.focusPhone}) : super(key: key);
   _selectDate(BuildContext context, RegisterState state) async {
     final DateTime? selected = await showDatePicker(
       context: context,
@@ -39,7 +41,7 @@ class Birthday extends StatelessWidget {
                           DateFormat("dd MMMM yyyy").format(
                             state.birthday ?? DateTime.now(),
                           ),
-                          textAlign:TextAlign.center,
+                          textAlign: TextAlign.center,
                         )
                       : Text("Pilih Tanggal Lahir",
                           textAlign: TextAlign.center),
@@ -50,6 +52,8 @@ class Birthday extends StatelessWidget {
                         backgroundColor:
                             MaterialStateProperty.all(Color(0xff00ADEF))),
                     onPressed: () {
+                      focusPhone!.unfocus();
+                      focusName!.unfocus();
                       _selectDate(context, state);
                     },
                     child: Text("Pilih Tanggal Lahir"),

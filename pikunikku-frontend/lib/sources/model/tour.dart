@@ -63,7 +63,7 @@ class Tour {
         availableSeat: json["available_seat"]??0,
         name: json["name"],
         slug: json["slug"],
-        desc: json["desc"],
+        desc: json["desc"]??"Tidak ada deskripsi",
         pict: json["pict"],
         category: json["category"],
         itinerary: json["itinerary"],

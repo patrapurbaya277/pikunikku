@@ -13,9 +13,24 @@ class RegisterState extends Equatable {
   final DateTime? birthday;
   final String? phoneNumber;
 
-  final String? city;
-  final String? province;
-  final String? postalCode;
+  // final String? city;
+  // final String? province;
+  // final String? postalCode;
+
+  final List<Provinsi>? listProvince;
+  final List<Kota>? listCity;
+  final List<Kecamatan>? listKecamatan;
+  final List<String>? listUniqueKecamatan;
+  final List<String>? listKelurahan;
+
+  final Kota? city;
+  final Provinsi? province;
+
+  final String? provinsi;
+  final String? kota;
+  final String? kecamatan;
+  final String? kelurahan;
+  final String? kodePos;
   final String? address;
 
   final bool? accountTrue;
@@ -27,30 +42,35 @@ class RegisterState extends Equatable {
   final bool? loading;
 
   RegisterState({
+    this.listUniqueKecamatan,
     this.email: "",
     this.password: "",
     this.confirmPassword = "",
     this.progress = 0,
-
     this.image,
-
-    this.name="",
-    this.gender="Laki-laki",
+    this.name = "",
+    this.gender = "Laki-laki",
     this.birthday,
-    this.phoneNumber="",
-
-    this.city = "",
-    this.province = "",
-    this.postalCode = "",
+    this.phoneNumber = "",
+    this.listCity,
+    this.listKecamatan,
+    this.listProvince,
+    this.listKelurahan,
+    this.provinsi,
+    this.kota,
+    this.city,
+    this.province,
+    this.kecamatan,
+    this.kelurahan,
+    this.kodePos,
+    // this.postalCode = "",
     this.address = "",
-
     this.accountTrue = false,
     this.identityTrue = false,
     this.addressTrue = false,
-
-    this.status=false,
-    this.message="",
-    this.loading=false,
+    this.status = false,
+    this.message = "",
+    this.loading = false,
   });
 
   @override
@@ -65,8 +85,18 @@ class RegisterState extends Equatable {
         birthday,
         phoneNumber,
         city,
+        provinsi,
+        kota,
         province,
-        postalCode,
+        kecamatan,
+        kelurahan,
+        kodePos,
+        listProvince,
+        listKecamatan,
+        listCity,
+        listKelurahan,
+        listUniqueKecamatan,
+        // postalCode,
         address,
         accountTrue,
         identityTrue,
@@ -80,24 +110,29 @@ class RegisterState extends Equatable {
     String? email,
     String? password,
     String? confirmPassword,
-
     File? image,
-
     String? name,
     String? gender,
     DateTime? birthday,
     String? phoneNumber,
-
-    String? city,
-    String? province,
-    String? postalCode,
+    List<Provinsi>? listProvince,
+    List<Kota>? listCity,
+    List<Kecamatan>? listKecamatan,
+    List<String>? listUniqueKecamatan,
+    List<String>? listKelurahan,
+    Kota? city,
+    Provinsi? province,
+    String? provinsi,
+    String? kota,
+    String? kecamatan,
+    String? kelurahan,
+    String? kodePos,
+    // String? postalCode,
     String? address,
-
     int? progress,
     bool? accountTrue,
     bool? identityTrue,
     bool? addressTrue,
-
     bool? status,
     String? message,
     bool? loading,
@@ -109,25 +144,35 @@ class RegisterState extends Equatable {
 
         progress: progress ?? this.progress,
 
-        image: image??this.image,
+        image: image ?? this.image,
 
-        name: name??this.name,
-        gender: gender??this.gender,
-        birthday: birthday??this.birthday,
-        phoneNumber: phoneNumber??this.phoneNumber,
-
+        name: name ?? this.name,
+        gender: gender ?? this.gender,
+        birthday: birthday ?? this.birthday,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
+        
+        province: province ?? this.province,
         city: city ?? this.city,
-        province: province??this.province,
-        postalCode: postalCode??this.postalCode,
-        address: address??this.address,
+        provinsi: provinsi??this.provinsi,
+        kota: kota??this.kota,
+        kelurahan: kelurahan?? this.kelurahan,
+        kodePos: kodePos??this.kodePos,
+        kecamatan: kecamatan ?? this.kecamatan,
+        // postalCode: postalCode??this.postalCode,
+        address: address ?? this.address,
+        listCity: listCity??this.listCity,
+        listKecamatan: listKecamatan??this.listKecamatan,
+        listKelurahan: listKelurahan??this.listKelurahan,
+        listProvince: listProvince??this.listProvince,
+        listUniqueKecamatan: listUniqueKecamatan??this.listUniqueKecamatan,
 
-        accountTrue: accountTrue??this.accountTrue,
-        identityTrue: identityTrue??this.identityTrue,
-        addressTrue: addressTrue??this.addressTrue,
+        accountTrue: accountTrue ?? this.accountTrue,
+        identityTrue: identityTrue ?? this.identityTrue,
+        addressTrue: addressTrue ?? this.addressTrue,
 
-        status: status??this.status,
-        message: message??this.message,
-        loading: loading??this.loading,
+        status: status ?? this.status,
+        message: message ?? this.message,
+        loading: loading ?? this.loading,
       );
 
   @override

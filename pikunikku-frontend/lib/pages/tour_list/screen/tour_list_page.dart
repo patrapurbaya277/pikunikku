@@ -9,8 +9,8 @@ class TourOnePage extends StatefulWidget {
   final String? title;
   final String? filter;
   const TourOnePage({ Key? key , this.title, this.filter}) : super(key: key);
-  static String dekat_rumah = "theme-travel";
-  static String pergi_jauh = "tour-travel";
+  static String dekatRumah = "theme-travel";
+  static String pergiJauh = "tour-travel";
 
   @override
   _TourOnePageState createState() => _TourOnePageState();

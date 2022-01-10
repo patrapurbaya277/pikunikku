@@ -13,8 +13,15 @@ class LoginForm extends StatelessWidget {
   final Function()? onSubmit;
   final ValueChanged<String>? onEmailChanged;
   final ValueChanged<String>? onPasswordChanged;
+  final FocusNode? focusEmail;
+  final FocusNode? focusPassword;
   const LoginForm(
-      {Key? key, this.onSubmit, this.onEmailChanged, this.onPasswordChanged})
+      {Key? key,
+      this.onSubmit,
+      this.onEmailChanged,
+      this.onPasswordChanged,
+      this.focusEmail,
+      this.focusPassword})
       : super(key: key);
   static TextEditingController emailController = TextEditingController();
   static TextEditingController passwordController = TextEditingController();
@@ -30,15 +37,24 @@ class LoginForm extends StatelessWidget {
             children: [
               LoginField(
                 hint: "Email",
+                action: TextInputAction.next,
                 value: loginState.email,
                 onChanged: onEmailChanged,
                 inputType: TextInputType.emailAddress,
+                focusNode: focusEmail,
               ),
               LoginField(
                 hint: "Password",
+                action: TextInputAction.done,
                 value: loginState.password,
                 isObscure: loginState.visiblePassword ? false : true,
                 onChanged: onPasswordChanged,
+                focusNode: focusPassword,
+                onComplete: (_) {
+                  context
+                      .read<UserCubit>()
+                      .login(loginState.email, loginState.password,context);
+                },
                 suffixIcon: Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: InkWell(
@@ -69,13 +85,13 @@ class LoginForm extends StatelessWidget {
               SizedBox(
                 height: 25,
               ),
-              userState.loading == true
-                  ? CircularProgressIndicator()
-                  : SubmitButton(
+              SubmitButton(
                       onPressed: () {
+                        focusEmail!.unfocus();
+                        focusPassword!.unfocus();
                         context
                             .read<UserCubit>()
-                            .login(loginState.email, loginState.password);
+                            .login(loginState.email, loginState.password,context);
                       },
                     ),
             ],

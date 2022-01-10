@@ -7,15 +7,13 @@ import 'package:pikunikku/main.dart';
 class DashHome extends StatelessWidget {
   const DashHome({Key? key}) : super(key: key);
 
-  NetworkImage showImage(String src) {
-    String defaultImage =
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png";
+  showImage(String src) {
     try {
-      if (src != defaultImage) {
+      if (src != "null") {
         return NetworkImage(
             "https://beta.pikunikku.id/assets/images/profil_member/" + src);
       }
-      return NetworkImage(defaultImage);
+      return AssetImage("assets/images/user_default.png");
     } catch (e) {
       return NetworkImage(
           "https://pikunikku.id/assets/images/profil_member/" + src);

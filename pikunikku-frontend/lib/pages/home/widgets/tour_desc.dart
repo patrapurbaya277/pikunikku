@@ -22,10 +22,7 @@ class TourDesc extends StatelessWidget {
               child: Text(
                 state.allTour![index].name.toString().capitalizeEachWord(),
                 maxLines: 2,
-                style: TextStyle(
-                  fontSize: 17,
-                  overflow: TextOverflow.ellipsis
-                ),
+                style: TextStyle(fontSize: 17, overflow: TextOverflow.ellipsis),
                 textAlign: TextAlign.start,
               ),
             ),
@@ -35,7 +32,9 @@ class TourDesc extends StatelessWidget {
                   Icons.access_time,
                   size: 15,
                 ),
-                SizedBox(width: 3,),
+                SizedBox(
+                  width: 3,
+                ),
                 Text(
                   state.allTour![index].duration.toString(),
                   textAlign: TextAlign.start,
@@ -43,9 +42,11 @@ class TourDesc extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Text(
-              state.allTour![index].desc.toString(),
+              state.allTour![index].desc!,
               maxLines: 4,
               style: TextStyle(
                 overflow: TextOverflow.ellipsis,

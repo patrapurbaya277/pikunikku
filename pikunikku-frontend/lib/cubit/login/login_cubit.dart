@@ -1,6 +1,7 @@
 
 import 'package:equatable/equatable.dart';
 // import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
@@ -18,6 +19,5 @@ class LoginCubit extends Cubit<LoginState> {
   void showHidePassword(){
     if(state.visiblePassword==true)emit(state.copyWith(visiblePassword: false));
     else if(state.visiblePassword==false)emit(state.copyWith(visiblePassword: true));
-    
   }
 }

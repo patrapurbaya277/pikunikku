@@ -60,7 +60,7 @@ class User {
         kodePos: json["kode_pos"],
         tglLahir: DateTime.parse(json["tgl_lahir"]),
         jenisKelamin: json["jenis_kelamin"],
-        picture: json["picture"]??"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+        picture: json["picture"]??"null",
         pikunikkuPoint: json["pikunikku_point"]??0,
         // influencer: json["influencer"],
         // referral: json["referral"],

@@ -20,7 +20,7 @@ class UserState extends Equatable {
           user: user??this.user,
           status: status??false,
           message: message??"",
-          token: token??"",
+          token: token??this.token,
           loading: loading??false,
           authSuccess: authSuccess??false);
 

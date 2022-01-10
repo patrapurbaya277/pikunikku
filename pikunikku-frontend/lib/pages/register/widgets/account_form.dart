@@ -8,63 +8,59 @@ import 'package:pikunikku/pages/register/widgets/navigation_button.dart';
 import 'register_field.dart';
 
 class AccountField extends StatelessWidget {
-  const AccountField({Key? key}) : super(key: key);
-  static TextEditingController emailController = TextEditingController();
-  static TextEditingController passwordController = TextEditingController();
-  static TextEditingController cPasswordController = TextEditingController();
+  final FocusNode? emailFocus;
+  final FocusNode? passwordFocus;
+  final FocusNode? cPasswordFocus;
+  const AccountField({Key? key, this.emailFocus, this.passwordFocus, this.cPasswordFocus}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return BlocListener<RegisterCubit, RegisterState>(
-      listener: (BuildContext context, state) async {
-        if (state.password == state.confirmPassword &&
-            state.password.length > 5 && state.email!="") {
-          context.read<RegisterCubit>().accountConfirmation(true);
-        } else {
-          context.read<RegisterCubit>().accountConfirmation(false);
-        }
-      },
-      child: BlocBuilder<RegisterCubit, RegisterState>(
-        builder: (context, state) => Column(
-          children: [
-            RegisterField(
-              // validator: (value)=> value!.isValidEmail()?null:"Masukkan email dengan benar",
-              label: "Email :",
-              value: state.email,
-              inputType: TextInputType.emailAddress,
-              onChanged: (value) =>
-                  context.read<RegisterCubit>().onEmailChanged(value),
-            ),
-            RegisterField(
-              label: "Password :",
-              value: state.password,
-              obscured: true,
-              onChanged: (value) =>
-                  context.read<RegisterCubit>().onPasswordChanged(value),
-            ),
-            Text("Panjang minimal password adalah 6 karakter"),
-            RegisterField(
-              label: "Confirm Password :",
-              value: state.confirmPassword,
-              obscured: true,
-              onChanged: (value) =>
-                  context.read<RegisterCubit>().onConfirmPasswordChanged(value),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                NavigationButton(
-                  enabled: state.accountTrue,
-                  type: NavigationButton.next,
-                  onPressed: () {
-                    if(state.accountTrue==true){
-                      context.read<RegisterCubit>().nextProgress();
-                    }
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
+    return BlocBuilder<RegisterCubit, RegisterState>(
+      builder: (context, state) => Column(
+        children: [
+          RegisterField(
+            inputAction: TextInputAction.next,
+            // validator: (value)=> value!.isValidEmail()?null:"Masukkan email dengan benar",
+            label: "Email :",
+            value: state.email,
+            inputType: TextInputType.emailAddress,
+            onChanged: (value) =>
+                context.read<RegisterCubit>().onEmailChanged(value),
+            focusNode: emailFocus,
+          ),
+          RegisterField(
+            inputAction: TextInputAction.next,
+            label: "Password :",
+            value: state.password,
+            obscured: true,
+            onChanged: (value) =>
+                context.read<RegisterCubit>().onPasswordChanged(value),
+            focusNode: passwordFocus,
+          ),
+          Text("Panjang minimal password adalah 6 karakter"),
+          RegisterField(
+            inputAction: TextInputAction.done,
+            label: "Confirm Password :",
+            value: state.confirmPassword,
+            obscured: true,
+            onChanged: (value) =>
+                context.read<RegisterCubit>().onConfirmPasswordChanged(value),
+            focusNode: cPasswordFocus,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              NavigationButton(
+                enabled: state.accountTrue,
+                type: NavigationButton.next,
+                onPressed: () {
+                  if(state.accountTrue==true){
+                    context.read<RegisterCubit>().nextProgress();
+                  }
+                },
+              )
+            ],
+          ),
+        ],
       ),
     );
   }

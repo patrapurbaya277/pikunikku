@@ -15,6 +15,13 @@ class TourState extends Equatable {
   final bool? loadingData;
   final bool? successGetData;
 
+  final bool? loadingPaket;
+  final List<Paket>? listPaket;
+  final List<Paket>? selectedListPaket;
+  final bool? hasFilteredData;
+  // final String? filter;
+  final Paket? selectedPaket;
+
   TourState({
     this.singleTour,
 
@@ -29,11 +36,23 @@ class TourState extends Equatable {
 
     this.loadingData:false,
     this.successGetData=false,
+
+    this.loadingPaket=false,
+    this.listPaket,
+    this.selectedListPaket,
+    this.selectedPaket,
+    // this.filter,
+    this.hasFilteredData=false,
+    
   });
 
   @override
   List<Object?> get props =>
-      [singleTour, allTour, listTourPergiJauh, listTourDekatRumah, allTourLength, listTourPergiJauhLength,listTourPergiJauhLength, loadingData, successGetData];
+      [singleTour, allTour, listTourPergiJauh, listTourDekatRumah, allTourLength, listTourPergiJauhLength,listTourPergiJauhLength, loadingData, successGetData,listPaket, selectedPaket, selectedListPaket,
+      // filter,
+      hasFilteredData,
+      loadingPaket,
+      ];
 
   TourState copyWith({
     Tour? singleTour,
@@ -49,6 +68,14 @@ class TourState extends Equatable {
 
     bool? loadingData,
     bool? successGetData,
+
+    List<Paket>? listPaket,
+    List<Paket>? selectedListPaket,
+    Paket? selectedPaket,
+    bool? loadingPaket,
+    String? filter, 
+    bool? hasFilteredData,
+    // bool? hasFilteredData,
   }) =>
       TourState(
         singleTour: singleTour??this.singleTour,
@@ -64,6 +91,13 @@ class TourState extends Equatable {
 
         loadingData: loadingData??this.loadingData,
         successGetData: successGetData??this.successGetData,
+
+        listPaket: listPaket??this.listPaket,
+        selectedPaket: selectedPaket??this.selectedPaket,
+        selectedListPaket: selectedListPaket??this.selectedListPaket,
+        loadingPaket: loadingPaket??this.loadingPaket,
+        // filter:filter??this.filter,
+        hasFilteredData: hasFilteredData??this.hasFilteredData,
       );
 
   @override

@@ -13,7 +13,7 @@ part 'paket_state.dart';
 class PaketCubit extends Cubit<PaketState> {
   PaketCubit() : super(PaketState());
 
-  void init(){
+  void initPaket(){
     emit(PaketState());
   }
   

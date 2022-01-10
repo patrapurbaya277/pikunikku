@@ -26,7 +26,6 @@ class CardContainer extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: children,
       ),
     );

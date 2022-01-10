@@ -12,102 +12,100 @@ import 'package:pikunikku/pages/register/widgets/register_field.dart';
 // import 'package:provider/src/provider.dart';
 
 class IdentityForm extends StatelessWidget {
-  const IdentityForm({Key? key}) : super(key: key);
+  final FocusNode? nameFocus;
+  final FocusNode? phoneFocus;
+  const IdentityForm({Key? key, this.nameFocus, this.phoneFocus}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<RegisterCubit, RegisterState>(
-      listener: (BuildContext context, state) async {
-        // if (state.name != "" &&
-        //     state.birthday != null &&
-        //     state.phoneNumber != "") {
-        //   context.read<RegisterCubit>().identityConfirmation(true);
-        // } else {
-        //   context.read<RegisterCubit>().identityConfirmation(false);
-        // }
-      },
-      child:
-          BlocBuilder<RegisterCubit, RegisterState>(builder: (context, state) {
-        return Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 150,
-                  width: 150,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
+    return BlocBuilder<RegisterCubit, RegisterState>(builder: (context, state) {
+      return Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 150,
+                width: 150,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                  ),
-                  child: state.image != null
-                      ? Image.file(File(state.image!.path), fit: BoxFit.cover)
-                      : Image.network(
-                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
-                          fit: BoxFit.cover),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: InkWell(
-                    onTap: () async {
-                      context.read<RegisterCubit>().pickImage(context);
-                    },
-                    child: Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Color(0xff00ADEF)),
-                      child: Icon(
-                        Icons.photo_camera_outlined,
-                        color: Colors.white,
-                        size: 25,
-                      ),
+                    border: Border.all(color: state.image != null?Colors.transparent:Colors.grey),
+                    image: DecorationImage(
+                        image: AssetImage(
+                          "assets/images/user_default.png",
+                        ),
+                        fit: BoxFit.cover)),
+                child: state.image != null
+                    ? Image.file(File(state.image!.path), fit: BoxFit.cover)
+                    : SizedBox()
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: InkWell(
+                  onTap: () async {
+                    context.read<RegisterCubit>().pickImage(context);
+                  },
+                  child: Container(
+                    width: 45,
+                    height: 45,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Color(0xff00ADEF)),
+                    child: Icon(
+                      Icons.photo_camera_outlined,
+                      color: Colors.white,
+                      size: 25,
                     ),
                   ),
                 ),
-              ],
-            ),
-            RegisterField(
-              label: "Nama",
-              value: state.name,
-              inputType: TextInputType.name,
-              onChanged: (value) =>
-                  context.read<RegisterCubit>().onNameChanged(value),
-            ),
-            GenderRadio(),
-            // Text("Tanggal Lahir"),
-            Birthday(),
-            RegisterField(
-              label: "Nomor Handphone",
-              value: state.phoneNumber,
-              inputType: TextInputType.number,
-              onChanged: (value) =>
-                  context.read<RegisterCubit>().onPhoneNumberChanged(value),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                NavigationButton(
-                  type: NavigationButton.before,
-                  onPressed: () =>
-                      context.read<RegisterCubit>().beforeProgress(),
-                  enabled: true,
-                ),
-                NavigationButton(
-                  // enabled: state.identityTrue,
-                  enabled: state.name != "" && state.birthday != null && state.phoneNumber != "",
-                  type: NavigationButton.next,
-                  onPressed: () {
-                    if (state.name != "" && state.birthday != null && state.phoneNumber != "") {
-                      context.read<RegisterCubit>().nextProgress();
-                    }
-                  },
-                )
-              ],
-            ),
-          ],
-        );
-      }),
-    );
+              ),
+            ],
+          ),
+          RegisterField(
+            label: "Nama",
+            value: state.name,
+            inputType: TextInputType.name,
+            onChanged: (value) =>
+                context.read<RegisterCubit>().onNameChanged(value),
+            focusNode: nameFocus,
+          ),
+          GenderRadio(focusName: nameFocus, focusPhone: phoneFocus,),
+          // Text("Tanggal Lahir"),
+          Birthday(focusName: nameFocus, focusPhone: phoneFocus),
+          RegisterField(
+            label: "Nomor Handphone",
+            value: state.phoneNumber,
+            inputType: TextInputType.number,
+            onChanged: (value) =>
+                context.read<RegisterCubit>().onPhoneNumberChanged(value),
+            focusNode: phoneFocus,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              NavigationButton(
+                type: NavigationButton.before,
+                onPressed: () => context.read<RegisterCubit>().beforeProgress(),
+                enabled: true,
+              ),
+              NavigationButton(
+                // enabled: state.identityTrue,
+                enabled: state.name != "" &&
+                    state.birthday != null &&
+                    state.phoneNumber != "",
+                type: NavigationButton.next,
+                onPressed: () {
+                  if (state.name != "" &&
+                      state.birthday != null &&
+                      state.phoneNumber != "") {
+                    context.read<RegisterCubit>().nextProgress();
+                  }
+                },
+              )
+            ],
+          ),
+        ],
+      );
+    });
   }
 }

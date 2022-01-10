@@ -14,7 +14,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:path_provider/path_provider.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pikunikku/pages/tour_detail/screen/tour_detail.dart';
+import 'package:pikunikku/pages/tour_paket/screen/tour_paket.dart';
 import 'package:pikunikku/sources/api/API.dart';
+import 'package:pikunikku/sources/model/paket.dart';
 import 'package:pikunikku/sources/model/tour.dart';
 
 part 'tour_state.dart';
@@ -26,19 +28,20 @@ class TourCubit extends Cubit<TourState> {
     http.Response response;
     try {
       response = await http.get(API.allTour);
-      print(response.body);
+      // print(response.body);
       final jsonData = jsonDecode((response.body).toString());
       if (response.statusCode == 200) {
         List<Tour> _listTour = [];
         for (var item in jsonData["data"]) {
           _listTour.add(Tour.fromJson(item));
         }
+        _listTour = _listTour.where((element) => element.deparatureTime!.isAfter(DateTime.now())).toList();
         _listTour.sort((a, b) {
           return a.createdAt!.compareTo(DateTime.parse(b.createdAt.toString()));
         });
         emit(state.copyWith(
             allTour: _listTour,
-            allTourLength: 5,
+            allTourLength: _listTour.length>5?5:_listTour.length,
             listTourDekatRumah: _listTour
                 .where((element) => element.category == "theme-travel")
                 .toList(),
@@ -56,6 +59,7 @@ class TourCubit extends Cubit<TourState> {
 
   void getTourDetail(BuildContext context, Tour tour) {
     emit(state.copyWith(singleTour: tour));
+    getListPaket();
     Navigator.of(context).push(
         MaterialPageRoute(builder: (BuildContext context) => TourDetail()));
   }
@@ -123,5 +127,34 @@ class TourCubit extends Cubit<TourState> {
         content:
             Text('File berhasil diunduh dan tersimpan di folder Downloads'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void getListPaket()async{
+    emit(state.copyWith(loadingPaket: true, selectedListPaket: [],));
+    http.Response response;
+    try {
+      response = await http.get(API.paket);
+      print(response.body);
+      final jsonData = jsonDecode((response.body).toString());
+      if (response.statusCode == 200) {
+        List<Paket> _listPaket = [];
+        for (var item in jsonData["data"]) {
+          _listPaket.add(Paket.fromJson(item));
+        }
+        emit(state.copyWith(listPaket: _listPaket,));
+        List<Paket> _listSelectedPaket = List.from(_listPaket.where((element) => element.configPaketId==state.singleTour!.id));
+        if(_listSelectedPaket.length!=0){
+          emit(state.copyWith(hasFilteredData: true, selectedListPaket: _listSelectedPaket));
+        }
+        // emit(state.copyWith(loadingData: false));
+        print("sukses get paket");
+      }
+    } catch (e) {
+      print("Error saat mendapatkan paket");
+    }
+  }
+
+  void showFilterPaket(context){
+    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context)=>PaketPage()));
   }
 }

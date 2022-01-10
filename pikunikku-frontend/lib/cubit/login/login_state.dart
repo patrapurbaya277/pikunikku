@@ -5,6 +5,7 @@ class LoginState extends Equatable{
   final String email;
   final String password;
   final bool visiblePassword;
+  
 
   LoginState(
       {this.email: "", this.password: "", this.visiblePassword=false});

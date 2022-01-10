@@ -2,16 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 // import 'package:dio/dio.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_cropper/image_cropper.dart';
+// import 'package:image_cropper/image_cropper.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_gallery_camera/image_picker_gallery_camera.dart';
 import 'package:intl/intl.dart';
 import 'package:pikunikku/sources/api/API.dart';
+import 'package:pikunikku/sources/model/kecamatan.dart';
+import 'package:pikunikku/sources/model/kota.dart';
+import 'package:pikunikku/sources/model/provinsi.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 // import 'package:pikunikku/sources/api/url.dart';
 // import 'package:http/http.dart';
@@ -35,7 +39,9 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void onNameChanged(String value) => emit(state.copyWith(name: value));
 
-  void onGenderChanged(String value) => emit(state.copyWith(gender: value));
+  void onGenderChanged(String value) {
+    emit(state.copyWith(gender: value));
+  }
 
   void updateBirthday(DateTime date) => emit(state.copyWith(birthday: date));
 
@@ -45,12 +51,65 @@ class RegisterCubit extends Cubit<RegisterState> {
   void identityConfirmation(bool check) =>
       emit(state.copyWith(identityTrue: check));
 
-  void onCityChanged(String value) => emit(state.copyWith(city: value));
+  // void onCityChanged(String value) {
+  //   emit(state.copyWith(
+  //     kecamatan: null,
+  //     kelurahan: null,
+  //     kodePos: null,
+  //     listKecamatan: [],
+  //     listKelurahan: [],
+  //     listUniqueKecamatan: [],
+  //   ));
+  //   emit(state.copyWith(
+  //     city: state.listCity!.firstWhere((element) => element.kota == value),
+  //   ));
+  //   getKecamatan();
+  // }
 
-  void onProvinceChanged(String value) => emit(state.copyWith(province: value));
+  // void onProvinceChanged(String value) {
+  //   emit(state.copyWith(
+  //     city: null,
+  //     kecamatan: null,
+  //     kelurahan: null,
+  //     kodePos: null,
+  //     listCity: [],
+  //     listKelurahan: [],
+  //     listKecamatan: [],
+  //     listUniqueKecamatan: [],
+  //   ));
+  //   emit(state.copyWith(
+  //     province: state.listProvince!
+  //         .firstWhere((element) => element.provinsi == value),
+  //   ));
+  //   getKota();
+  // }
 
-  void onPostalCodeChanged(String value) =>
-      emit(state.copyWith(postalCode: value));
+  // void onKecamatanChanged(String value) {
+  //   emit(state.copyWith(
+  //     kelurahan: null,
+  //     kodePos: null,
+  //     listKelurahan: [],
+  //   ));
+  //   emit(state.copyWith(
+  //     kecamatan: value,
+  //   ));
+  //   getKelurahan();
+  // }
+
+  // void onKelurahanChanged(String value) {
+  //   emit(state.copyWith(
+  //       kelurahan: value,
+  //       kodePos: state.listKecamatan!
+  //           .firstWhere((element) => element.kelurahan == value)
+  //           .kodepos));
+  //   print(state.kelurahan);
+  //   print(state.kodePos);
+  // }
+
+  // void onKodePosChanged(String value) => emit(state.copyWith(kodePos: value));
+
+  // void onPostalCodeChanged(String value) =>
+  //     emit(state.copyWith(postalCode: value));
 
   void onAddressChanged(String value) => emit(state.copyWith(address: value));
 
@@ -65,137 +124,315 @@ class RegisterCubit extends Cubit<RegisterState> {
     var _image = await ImagePickerGC.pickImage(
       source: ImgSource.Both,
       context: context,
+      galleryIcon: Icon(Icons.image, color: Color(0xff00adef)),
+      cameraIcon: Icon(Icons.camera_alt, color: Color(0xff00adef)),
+      barrierDismissible: true,
       cameraText: Text(
         "Dari Kamera",
-        style: TextStyle(color: Colors.red),
+        style: TextStyle(color: Colors.black),
       ),
       galleryText: Text(
         "Dari Galeri",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: Colors.black),
       ),
     );
-    File? _croppedImage = await ImageCropper.cropImage(
-      sourcePath: _image.path,
-      aspectRatio: CropAspectRatio(
-        ratioX: 1,
-        ratioY: 1,
-      ),
-    );
+    // File? _croppedImage = await ImageCropper.cropImage(
+    //   sourcePath: _image.path,
+    //   aspectRatio: CropAspectRatio(
+    //     ratioX: 1,
+    //     ratioY: 1,
+    //   ),
+    // );
+    if (_image != null) {
+      emit(state.copyWith(image: File(_image.path)));
+    }
 
-    emit(state.copyWith(image: _croppedImage));
+    // emit(state.copyWith(image: File(_croppedImage!.path)));
+    // emit(state.copyWith(image: _croppedImage));
   }
 
   void registerMultipart(BuildContext context) async {
-    print(API.register.toString());
+    // print(API.register.toString());
     emit(state.copyWith(loading: true));
-    try {
-      var request = http.MultipartRequest('POST', API.register);
-      // request.files.add(await http.MultipartFile.fromPath('picture', image.path));
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'picture',
-          File(state.image!.path).readAsBytesSync(),
-          filename: state.image!.path.split("/").last,
-        ),
-      );
-      print(state.image!.path);
-      print(state.image!.path.split("/").last);
-      print("picture type :" + state.image!.runtimeType.toString());
-      request.fields.addAll(
-        {
-          'nama': state.name.toString(),
-          'no_hp': state.phoneNumber.toString(),
-          'email': state.email,
-          'password': state.confirmPassword,
-          'alamat': state.address.toString(),
-          'kota': state.city.toString(),
-          'provinsi': state.province.toString(),
-          'kode_pos': state.postalCode.toString(),
-          'tgl_lahir':
-              DateFormat("yyyy-MM-dd").format(state.birthday ?? DateTime.now()),
-          'jenis_kelamin': state.gender.toString(),
-        },
-      );
-      var res = await request.send();
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult != ConnectivityResult.none) {
+      try {
+        var request = http.MultipartRequest('POST', API.register);
+        // request.files.add(await http.MultipartFile.fromPath('picture', image.path));
+        if (state.image != null) {
+          request.files.add(
+            http.MultipartFile.fromBytes(
+              'picture',
+              File(state.image!.path).readAsBytesSync(),
+              filename: state.image!.path.split("/").last,
+            ),
+          );
+        }
+        // print(state.image!.path);
+        // print(state.image!.path.split("/").last);
+        // print("picture type :" + state.image!.runtimeType.toString());
+        request.fields.addAll(
+          {
+            'nama': state.name.toString(),
+            'no_hp': state.phoneNumber.toString(),
+            'email': state.email,
+            'password': state.confirmPassword,
+            'alamat': state.address.toString(),
+            'kota': state.kota.toString(),
+            'provinsi': state.provinsi.toString(),
+            'kode_pos': state.kodePos.toString(),
+            'tgl_lahir': DateFormat("yyyy-MM-dd")
+                .format(state.birthday ?? DateTime.now()),
+            'jenis_kelamin': state.gender.toString(),
+          },
+        );
+        var res = await request.send();
 
-      var responseData = await res.stream.toBytes();
-      var responseString = String.fromCharCodes(responseData);
-      print(responseString);
-      final jsonData = jsonDecode(responseString);
-      if (res.statusCode == 200) {
-        if (jsonData["status"] == true) {
-          emit(state.copyWith(
-              status: jsonData["status"],
-              message: jsonData["msg"],
-              loading: false));
+        var responseData = await res.stream.toBytes();
+        var responseString = String.fromCharCodes(responseData);
+        // print(responseString);
+        final jsonData = jsonDecode(responseString);
+        if (res.statusCode == 200) {
+          if (jsonData["status"] == true) {
+            emit(state.copyWith(
+                status: jsonData["status"],
+                message: jsonData["msg"],
+                loading: false));
+          } else {
+            emit(state.copyWith(
+                status: jsonData["status"],
+                message: jsonData["msg"],
+                loading: false));
+          }
+          // print(responseString);
+          // print(responseString.runtimeType);
         } else {
           emit(state.copyWith(
               status: jsonData["status"],
               message: jsonData["msg"],
               loading: false));
         }
-        print(responseString);
-        print(responseString.runtimeType);
-      } else {
+        // var responseString = String.fromCharCodes(responseData);
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(exception.toString())));
         emit(state.copyWith(
-            status: jsonData["status"],
-            message: jsonData["msg"],
-            loading: false));
+            loading: false, message: "Terjadi Kesalahan. Silahkan Coba Lagi."));
       }
-      // var responseString = String.fromCharCodes(responseData);
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
+    } else{
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(exception.toString())));
-      emit(state.copyWith(loading: false, message: "Terjadi Kesalahan"));
+          .showSnackBar(SnackBar(content: Text("Tidak ada koneksi internet")));
+      emit(state.copyWith(
+        loading: false,
+      ));
     }
   }
 
-  // void register() async {
-  //   emit(state.copyWith(loading: true));
-  //   http.Response response;
-  //   try {
-  //     response = await http.post(
-  //       API.register,
-  //       body: {
-  //         'nama': state.name,
-  //         'no_hp': state.phoneNumber,
-  //         'email': state.email,
-  //         'password': state.confirmPassword,
-  //         'alamat': state.address,
-  //         'kota': state.city,
-  //         'provinsi': state.province,
-  //         'kode_pos': state.postalCode,
-  //         'tgl_lahir':
-  //             DateFormat("yyyy-MM-dd").format(state.birthday ?? DateTime.now()),
-  //         'jenis_kelamin': state.gender,
-  //       },
-  //     );
-  //     print(response.body);
-  //     final jsonData = jsonDecode((response.body).toString());
-  //     if (response.statusCode == 200) {
-  //       if (jsonData["status"] == true) {
-  //         emit(state.copyWith(
-  //             status: jsonData["status"],
-  //             message: jsonData["msg"],
-  //             loading: false));
-  //       } else {
-  //         emit(state.copyWith(
-  //             status: jsonData["status"],
-  //             message: jsonData["msg"],
-  //             loading: false));
-  //       }
-  //     } else {
-  //       emit(state.copyWith(
-  //           status: jsonData["status"],
-  //           message: jsonData["msg"],
-  //           loading: false));
-  //     }
-  //   } catch (e) {
-  //     print("Error saat register");
-  //   }
-  // }
+  void getProvinsi() async {
+    http.Response response;
+    response = await http.get(API.provinsi);
+    // print(jsonData);
+    final jsonData = jsonDecode(response.body.toString());
+    Map<String, dynamic> data = jsonData;
+    List<Provinsi> _listProvinsi = data.entries
+        .map((e) => Provinsi(id: e.key, provinsi: e.value))
+        .toList();
+    emit(state.copyWith(listProvince: _listProvinsi));
+  }
+
+  void getKota() async {
+    // emit(state.copyWith(listCity: []));
+    http.Response response;
+    response = await http.get(API.kota(state.province!.id.toString()));
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final jsonData = jsonDecode(response.body.toString());
+      Map<String, dynamic> data = jsonData;
+      List<Kota> _listKota =
+          data.entries.map((e) => Kota(id: e.key, kota: e.value)).toList();
+      emit(state.copyWith(
+        listCity: _listKota,
+      ));
+    }
+  }
+
+  void getKecamatan() async {
+    // emit(state.copyWith(listUniqueKecamatan: []));
+    http.Response response;
+    response = await http.get(API.kecamatan(state.city!.id.toString()));
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final jsonData = jsonDecode(response.body.toString());
+      print(jsonData);
+      List<Kecamatan> _listKecamatan = [];
+      List<String> _listUnique = [];
+      for (var item in jsonData) {
+        Kecamatan kec = Kecamatan.fromJson(item);
+        _listKecamatan.add(kec);
+        _listUnique.add(kec.kecamatan.toString());
+      }
+      emit(state.copyWith(
+          listUniqueKecamatan: _listUnique.toSet().toList(),
+          listKecamatan: _listKecamatan));
+    }
+  }
+
+  void getKelurahan() {
+    // emit(state.copyWith(listKelurahan: []));
+    List<Kecamatan> _listKecamatan = state.listKecamatan!
+        .where((element) => element.kecamatan == state.kecamatan)
+        .toList();
+    List<String> _listKelurahan = [];
+    for (var item in _listKecamatan) {
+      _listKelurahan.add(item.kelurahan.toString());
+    }
+    emit(state.copyWith(listKelurahan: _listKelurahan));
+  }
+
+  Widget listProvinsiContent(BuildContext context) {
+    return Container(
+      height: 300.0, // Change as per your requirement
+      width: 300.0, // Change as per your requirement
+      child: Scrollbar(
+        isAlwaysShown: true,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: state.listProvince!.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: InkWell(
+                child: Container(
+                    child:
+                        Text(state.listProvince![index].provinsi.toString())),
+                onTap: () {
+                  emit(state.copyWith(
+                    province: state.listProvince![index],
+                    provinsi: state.listProvince![index].provinsi,
+                    kota: "",
+                    listCity: [],
+                    listUniqueKecamatan: [],
+                    city: Kota(),
+                    listKecamatan: [],
+                    kecamatan: "",
+                    listKelurahan: [],
+                    kelurahan: "",
+                    kodePos: "",
+                  ));
+                  getKota();
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget listKotaContent(BuildContext context) {
+    print(state.listCity);
+    return Container(
+      height: 300.0, // Change as per your requirement
+      width: 300.0, // Change as per your requirement
+      child: Scrollbar(
+        isAlwaysShown: true,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: state.listCity != null ? state.listCity!.length : 0,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: InkWell(
+                child: Text(state.listCity![index].kota.toString()),
+                onTap: () {
+                  emit(state.copyWith(
+                    city: state.listCity![index],
+                    kota: state.listCity![index].kota,
+                    kecamatan: "",
+                    listUniqueKecamatan: [],
+                    listKecamatan: [],
+                    listKelurahan: [],
+                    kelurahan: "",
+                    kodePos: "",
+                  ));
+                  getKecamatan();
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget listKecamatanContent(BuildContext context) {
+    return Container(
+      height: 300.0, // Change as per your requirement
+      width: 300.0, // Change as per your requirement
+      child: Scrollbar(
+        isAlwaysShown: true,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: state.listUniqueKecamatan != null
+              ? state.listUniqueKecamatan!.length
+              : 0,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: InkWell(
+                child: Text(state.listUniqueKecamatan![index]),
+                onTap: () {
+                  emit(state.copyWith(
+                    kelurahan: "",
+                    kodePos: "",
+                    listKelurahan: [],
+                  ));
+                  emit(state.copyWith(
+                    kecamatan: state.listUniqueKecamatan![index],
+                  ));
+                  getKelurahan();
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget listKelurahanContent(BuildContext context) {
+    return Container(
+      height: 300.0, // Change as per your requirement
+      width: 300.0, // Change as per your requirement
+      child: Scrollbar(
+        isAlwaysShown: true,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount:
+              state.listKelurahan != null ? state.listKelurahan!.length : 0,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: InkWell(
+                child: Text(state.listKelurahan![index]),
+                onTap: () {
+                  emit(
+                    state.copyWith(
+                        kelurahan: state.listKelurahan![index],
+                        kodePos: state.listKecamatan!
+                            .firstWhere((element) =>
+                                element.kelurahan ==
+                                state.listKelurahan![index])
+                            .kodepos),
+                  );
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

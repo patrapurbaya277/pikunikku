@@ -17,6 +17,13 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  FocusNode focusEmail = new FocusNode();
+  FocusNode focusPassword = new FocusNode();
+  FocusNode focusCPassword = new FocusNode();
+  FocusNode focusName = new FocusNode();
+  FocusNode focusPhone = new FocusNode();
+  FocusNode focusAddress = new FocusNode();
+
   TextStyle subStyle = TextStyle(
     color: Color(0xffAFAFAF),
     fontSize: 18,
@@ -32,146 +39,188 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget build(BuildContext context) {
-    return BlocBuilder<RegisterCubit, RegisterState>(builder: (context, state) {
-      return Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xff00ADEF),
-                  Color(0xff7FCCEB),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              height: 135,
-              width: MediaQuery.of(context).size.width / 1.5,
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(200)),
-                color: Colors.white,
-              ),
-              child: SizedBox(
-                height: 100,
-                width: 300,
-                child: Image.asset(
-                  "assets/images/logo_black.png",
-                  fit: BoxFit.cover,
+    context.read<RegisterCubit>().getProvinsi();
+    return BlocListener<RegisterCubit, RegisterState>(
+      listener: (BuildContext context, state) {
+        if (state.password == state.confirmPassword &&
+            state.password.length > 5 && state.email!="") {
+          context.read<RegisterCubit>().accountConfirmation(true);
+        } else {
+          context.read<RegisterCubit>().accountConfirmation(false);
+        }
+
+        if (state.name != "" &&
+            state.birthday != null &&
+            state.phoneNumber != "") {
+          context.read<RegisterCubit>().identityConfirmation(true);
+        } else {
+          context.read<RegisterCubit>().identityConfirmation(false);
+        }
+
+        if (state.city != null &&
+            state.province != null &&
+            state.kecamatan != "" &&
+            state.kelurahan != "" &&
+            state.kodePos != "" &&
+            state.address != "") {
+          context.read<RegisterCubit>().addressConfirmation(true);
+        } else {
+          context.read<RegisterCubit>().addressConfirmation(false);
+        }
+      },
+      child:
+          BlocBuilder<RegisterCubit, RegisterState>(builder: (context, state) {
+        return GestureDetector(
+          onTap: (){
+            focusEmail.unfocus();
+            focusPassword.unfocus();
+            focusCPassword.unfocus();
+            focusName.unfocus();
+            focusPhone.unfocus();
+            focusAddress.unfocus();
+          },
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.center,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xff00ADEF),
+                      Color(0xff7FCCEB),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 40,
-              shadowColor: Colors.transparent,
-              // toolbarOpacity: 0,
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              // leading: Icon(Icons.arrow_back, color: Colors.black),
-            ),
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 135,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: state.status == true
-                          ? Column(
-                              children: [
-                                Text(
-                                  "Akun berhasil dibuat",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "Silahkan kembali ke halaman login",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 17),
-                                ),
-                              ],
-                            )
-                          : CardContainer(
-                              children: [
-                                Text(
-                                  "Daftar",
-                                  style: TextStyle(
-                                      color: Color(0xff00ADEF),
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  height: 135,
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(200)),
+                    color: Colors.white,
+                  ),
+                  child: SizedBox(
+                    height: 100,
+                    width: 300,
+                    child: Image.asset(
+                      "assets/images/logo_black.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              Scaffold(
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.startTop,
+                floatingActionButton: TextButton(
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                backgroundColor: Colors.transparent,
+                body: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Center(
+                          child: state.status == true
+                              ? Column(
                                   children: [
-                                    Expanded(
-                                        child: Text(
-                                      "Akun",
-                                      style: state.progress == 0
-                                          ? selectedStyle
-                                          : subStyle,
-                                      textAlign: TextAlign.center,
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      "Data Diri",
-                                      style: state.progress == 1
-                                          ? selectedStyle
-                                          : subStyle,
-                                      textAlign: TextAlign.center,
-                                    )),
-                                    Expanded(
-                                        child: Text(
-                                      "Alamat",
-                                      style: state.progress == 2
-                                          ? selectedStyle
-                                          : subStyle,
-                                      textAlign: TextAlign.center,
-                                    )),
+                                    Text(
+                                      "Akun berhasil dibuat",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      "Silahkan kembali ke halaman login",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 17),
+                                    ),
+                                  ],
+                                )
+                              : CardContainer(
+                                  children: [
+                                    Text(
+                                      "Daftar",
+                                      style: TextStyle(
+                                          color: Color(0xff00ADEF),
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                            child: Text(
+                                          "Akun",
+                                          style: state.progress == 0
+                                              ? selectedStyle
+                                              : subStyle,
+                                          textAlign: TextAlign.center,
+                                        )),
+                                        Expanded(
+                                            child: Text(
+                                          "Data Diri",
+                                          style: state.progress == 1
+                                              ? selectedStyle
+                                              : subStyle,
+                                          textAlign: TextAlign.center,
+                                        )),
+                                        Expanded(
+                                            child: Text(
+                                          "Alamat",
+                                          style: state.progress == 2
+                                              ? selectedStyle
+                                              : subStyle,
+                                          textAlign: TextAlign.center,
+                                        )),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: Text(
+                                        state.status == true
+                                            ? ""
+                                            : state.loading == true
+                                                ? ""
+                                                : state.message.toString(),
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    [
+                                      AccountField(emailFocus: focusEmail,passwordFocus: focusPassword, cPasswordFocus: focusCPassword,),
+                                      IdentityForm(nameFocus: focusName, phoneFocus: focusPhone,),
+                                      AddressForm(addressFocus: focusAddress,),
+                                    ][state.progress!.toInt()]
                                   ],
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  child: Text(
-                                    state.status == true
-                                        ? ""
-                                        : state.loading == true
-                                            ? ""
-                                            : state.message.toString(),
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ),
-                                [
-                                  AccountField(),
-                                  IdentityForm(),
-                                  AddressForm(),
-                                ][state.progress!.toInt()]
-                              ],
-                            ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      );
-    });
+        );
+      }),
+    );
   }
 }

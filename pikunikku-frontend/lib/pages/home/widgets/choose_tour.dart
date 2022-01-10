@@ -4,7 +4,6 @@ import 'package:pikunikku/pages/tour_list/screen/tour_list_page.dart';
 
 class ChooseTour extends StatelessWidget {
   const ChooseTour({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return InkWell(

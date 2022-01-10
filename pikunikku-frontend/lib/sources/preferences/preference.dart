@@ -4,7 +4,7 @@ class Preferences {
   final String tokenAuth = "token";
 
 //set data into shared preferences like this
-  Future<void> setAuthToken(String authToken) async {
+  setAuthToken(String authToken) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(this.tokenAuth, authToken);
   }

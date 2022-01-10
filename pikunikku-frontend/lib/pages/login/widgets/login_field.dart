@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+// import 'package:pikunikku/cubit/login/login_cubit.dart';
+// import 'package:provider/src/provider.dart';
+// import 'package:flutter/services.dart';
 
 class LoginField extends StatelessWidget {
   final String? value;
   final Widget? suffixIcon;
   final TextInputType? inputType;
+  final Function(String)? onComplete;
   final ValueChanged<String>? onChanged;
   final String? hint;
+  final FocusNode? focusNode;
+  final TextInputAction? action;
   // final LoginBloc2? bloc;
   final bool? isObscure;
   const LoginField(
       {Key? key, this.hint, this.isObscure, this.onChanged, this.inputType, 
-      this.suffixIcon, this.value
+      this.suffixIcon, this.value, this.action, this.onComplete, this.focusNode
       })
       : super(key: key);
 
@@ -25,6 +31,10 @@ class LoginField extends StatelessWidget {
           keyboardType: inputType??TextInputType.text,
           obscureText: isObscure??false,
           onChanged: onChanged,
+          onFieldSubmitted: onComplete??null,
+          textInputAction: action,
+          focusNode: focusNode,
+
           decoration: InputDecoration(
             // labelText: this.label,
             // errorText: snap.error.toString()??"",
