@@ -1,10 +1,13 @@
 import 'dart:async';
 // import 'dart:io';
 
-import 'package:connectivity/connectivity.dart';
+// import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pikunikku/cubit/about/about_cubit.dart';
 import 'package:pikunikku/cubit/article/article_cubit.dart';
+import 'package:pikunikku/cubit/booking/booking_cubit.dart';
 import 'package:pikunikku/cubit/main/main_cubit.dart';
 import 'package:pikunikku/cubit/tour/tour_cubit.dart';
 import 'package:pikunikku/cubit/user/user_cubit.dart';
@@ -35,28 +38,21 @@ class _MainPageState extends State<MainPage> {
   }
 
   initState() {
-    context.read<TourCubit>().getAllData();
-    context.read<ArticleCubit>().getListArticle();
-    Timer.periodic(Duration(seconds: 30), (timer) async {
+    context.read<TourCubit>().getAllTour(context);
+    context.read<ArticleCubit>().getListArticle(context);
+    context.read<AboutCubit>().getTestimoni(context);
+    Timer.periodic(Duration(seconds: 5), (timer) async {
       if (close == true) timer.cancel();
-      var connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult != ConnectivityResult.none) {
-        if (mounted) {
-          context.read<TourCubit>().getAllData();
-          context.read<ArticleCubit>().getListArticle();
-          context.read<UserCubit>().updateuser();
-          print("Update berkala" + DateTime.now().toString());
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Tidak ada koneksi internet")));
+      if (mounted) {
+        context.read<UserCubit>().updateuser(context);
+        context.read<BookingCubit>().listBookData(context);
       }
     });
     super.initState();
   }
 
   Future<bool> _onWillPop() async {
-    return (await showDialog(
+    return await showDialog(
           context: context,
           builder: (context) => new AlertDialog(
             title: new Text('Apakah anda yakin ?'),
@@ -64,27 +60,33 @@ class _MainPageState extends State<MainPage> {
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  setState(() {
-                    close = true;
-                  });
-                  super.dispose();
+                  Navigator.of(context).pop(false);
                 },
                 child: new Text('Tidak',
                     style: TextStyle(color: Color(0xff00adef))),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
                 child:
                     new Text('Ya', style: TextStyle(color: Color(0xff00adef))),
               ),
             ],
           ),
-        )) ??
+        ) ??
         false;
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
     return BlocBuilder<MainCubit, MainState>(
       builder: (context, state) => WillPopScope(
         onWillPop: _onWillPop,
@@ -95,8 +97,9 @@ class _MainPageState extends State<MainPage> {
               return Future.delayed(
                 Duration(seconds: 1),
                 () {
-                  context.read<TourCubit>().getAllData();
-                  context.read<ArticleCubit>().getListArticle();
+                  context.read<TourCubit>().getAllTour(context);
+                  context.read<ArticleCubit>().getListArticle(context);
+                  context.read<UserCubit>().updateuser(context);
                 },
               );
             },
@@ -105,8 +108,8 @@ class _MainPageState extends State<MainPage> {
               children: [
                 HomePage(),
                 ExplorePage(),
-                ProfilePage(),
                 ArticlePage(),
+                ProfilePage(),
               ],
             ),
           ),

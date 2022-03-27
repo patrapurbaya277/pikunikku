@@ -4,6 +4,7 @@ import 'package:pikunikku/cubit/register/register_cubit.dart';
 import 'package:pikunikku/pages/register/style.dart';
 
 class RegisterField extends StatelessWidget {
+  final Color? color;
   final bool? enabled;
   final String? Function(String?)? validator;
   final TextInputType? inputType;
@@ -19,6 +20,7 @@ class RegisterField extends StatelessWidget {
   final FocusNode? focusNode;
   const RegisterField(
       {Key? key,
+      this.color,
       this.enabled,
       this.label,
       this.controller,
@@ -44,7 +46,7 @@ class RegisterField extends StatelessWidget {
         children: [
           Text(
             "$label",
-            style: RegisterStyle.label,
+            style: color==null? RegisterStyle.label:TextStyle(color: color, fontSize: 21),
           ),
           SizedBox(height: 7),
           showField ?? true

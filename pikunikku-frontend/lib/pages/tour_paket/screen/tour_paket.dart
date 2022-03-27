@@ -12,35 +12,42 @@ class PaketPage extends StatefulWidget {
 }
 
 class _PaketPageState extends State<PaketPage> {
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TourCubit, TourState>(builder: (context, state) {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-            title: Text(
-              "Pilih paket yang tersedia",
-              style: TextStyle(color: Colors.black),
-            ),
-            backgroundColor: Colors.white,
-            shadowColor: Colors.transparent,
-            leading: InkWell(
-              onTap: (){
-                Navigator.of(context).pop();
-              },
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.black,
+      return RefreshIndicator(
+        onRefresh: (){
+          return Future.delayed(Duration(seconds: 1), () {
+            context.read<TourCubit>().getListPaket(context);
+          });
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+              title: Text(
+                "Pilih paket yang tersedia",
+                style: TextStyle(color: Colors.black),
               ),
-            )),
-        body: ListView(
-                    children: state.selectedListPaket!
-                        .map((e) => PaketItem(
-                              paket: e,
-                            ))
-                        .toList(),
-                  ),
+              backgroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              leading: InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+              )),
+          body: ListView(
+            children: state.selectedListPaket!
+                .map((e) => PaketItem(
+                      tour: state.singleTour,
+                      paket: e,
+                    ))
+                .toList(),
+          ),
+        ),
       );
     });
   }

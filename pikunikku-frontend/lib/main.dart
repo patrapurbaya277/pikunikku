@@ -3,14 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pikunikku/cubit/about/about_cubit.dart';
 import 'package:pikunikku/pages/login/screen/login_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'cubit/article/article_cubit.dart';
+import 'cubit/booking/booking_cubit.dart';
+import 'cubit/edit_profile/edit_cubit.dart';
 import 'cubit/login/login_cubit.dart';
 import 'cubit/main/main_cubit.dart';
 import 'cubit/paket/paket_cubit.dart';
 import 'cubit/register/register_cubit.dart';
+import 'cubit/search/search_cubit.dart';
 import 'cubit/tour/tour_cubit.dart';
 import 'cubit/user/user_cubit.dart';
 
@@ -34,13 +38,29 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+
+      systemNavigationBarDividerColor: Colors.transparent,
+
+      systemNavigationBarColor: Colors.black, 
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
     return MultiBlocProvider(
       providers: [
         BlocProvider<UserCubit>(
           create: (BuildContext context) => UserCubit(),
+        ),
+        BlocProvider<SearchCubit>(
+          create: (BuildContext context) => SearchCubit(),
+        ),
+        BlocProvider<EditCubit>(
+          create: (BuildContext context) => EditCubit(),
         ),
         BlocProvider<LoginCubit>(
           create: (BuildContext context) => LoginCubit(),
@@ -59,6 +79,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ArticleCubit>(
           create: (BuildContext context) => ArticleCubit(),
+        ),
+        BlocProvider<AboutCubit>(
+          create: (BuildContext context) => AboutCubit(),
+        ),
+        BlocProvider<BookingCubit>(
+          create: (BuildContext context) => BookingCubit(),
         ),
       ],
       child: MaterialApp(

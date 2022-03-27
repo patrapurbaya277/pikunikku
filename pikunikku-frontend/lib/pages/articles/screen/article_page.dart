@@ -15,9 +15,14 @@ class _ArticlePageState extends State<ArticlePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<ArticleCubit, ArticleState>(builder: (context, state) {
       return Scaffold(
-        body: state.listArticle==null?SizedBox():ListView(
-          padding: EdgeInsets.all(10),
-          children: state.listArticle!.map((e) => ArticleItem(article: e,)).toList()
+        backgroundColor: Colors.white,
+        body: state.listArticle==null?CircularProgressIndicator(
+          color: Color(0xff00adef),
+        ):SafeArea(
+          child: ListView(
+            padding: EdgeInsets.all(10),
+            children: state.listArticle!.map((e) => ArticleItem(article: e,)).toList()
+          ),
         ),
       );
     });

@@ -98,7 +98,7 @@ class DashHome extends StatelessWidget {
                           width: 80,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey,
+                            color: Colors.white,
                             image: DecorationImage(
                               image: showImage(state.user!.picture),
                               fit: BoxFit.cover,

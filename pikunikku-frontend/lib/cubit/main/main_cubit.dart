@@ -4,6 +4,9 @@
 import 'package:equatable/equatable.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:pikunikku/cubit/article/article_cubit.dart';
+// import 'package:pikunikku/cubit/tour/tour_cubit.dart';
+// import 'package:pikunikku/cubit/user/user_cubit.dart';
 
 part 'main_state.dart';
 
@@ -14,6 +17,4 @@ class MainCubit extends Cubit<MainState> {
 
   void onMenuChanged(int selectedIndex) =>
       emit(state.copyWith(selectedMenu: selectedIndex));
-
-  
 }

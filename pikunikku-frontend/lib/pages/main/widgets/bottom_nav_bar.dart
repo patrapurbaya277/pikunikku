@@ -14,29 +14,28 @@ class BottomNavBar extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.3),
-                blurRadius: 10,
+                blurRadius: 3,
                 spreadRadius: 0.5,
                 offset: Offset(-2,0)
               ),
             ]
           ),
           child: BottomNavigationBar(
+            backgroundColor: Colors.white,
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
               BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: "Explore"),
-              BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
               BottomNavigationBarItem(icon: Icon(Icons.push_pin_outlined), label: "Article"),
+              BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
             ],
             onTap: (value) => context.read<MainCubit>().onMenuChanged(value),
             currentIndex: state.selectedMenu,
-
             iconSize: 30,
             type: BottomNavigationBarType.fixed,
             // selectedFontSize: 20,
             showUnselectedLabels: false,
             showSelectedLabels: false,
             // elevation: 10,
-
             selectedIconTheme: IconThemeData(color: Color(0xff00adef)),
             unselectedIconTheme: IconThemeData(color: Colors.grey),
           ),

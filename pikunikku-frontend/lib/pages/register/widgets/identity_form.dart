@@ -14,7 +14,8 @@ import 'package:pikunikku/pages/register/widgets/register_field.dart';
 class IdentityForm extends StatelessWidget {
   final FocusNode? nameFocus;
   final FocusNode? phoneFocus;
-  const IdentityForm({Key? key, this.nameFocus, this.phoneFocus}) : super(key: key);
+  const IdentityForm({Key? key, this.nameFocus, this.phoneFocus})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +25,27 @@ class IdentityForm extends StatelessWidget {
           Stack(
             children: [
               Container(
-                height: 150,
-                width: 150,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
+                  height: 150,
+                  width: 150,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: state.image != null?Colors.transparent:Colors.grey),
-                    image: DecorationImage(
+                    color: state.image == null
+                            ? Colors.transparent
+                            : Colors.white,
+                    border: Border.all(
+                        color: state.image == null
+                            ? Colors.transparent
+                            : Colors.black),
+                    image: state.image==null?DecorationImage(
                         image: AssetImage(
                           "assets/images/user_default.png",
                         ),
-                        fit: BoxFit.cover)),
-                child: state.image != null
-                    ? Image.file(File(state.image!.path), fit: BoxFit.cover)
-                    : SizedBox()
-              ),
+                        fit: BoxFit.cover):null,
+                  ),
+                  child: state.image != null
+                      ? Image.file(File(state.image!.path), fit: BoxFit.cover)
+                      : SizedBox()),
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -69,7 +76,10 @@ class IdentityForm extends StatelessWidget {
                 context.read<RegisterCubit>().onNameChanged(value),
             focusNode: nameFocus,
           ),
-          GenderRadio(focusName: nameFocus, focusPhone: phoneFocus,),
+          GenderRadio(
+            focusName: nameFocus,
+            focusPhone: phoneFocus,
+          ),
           // Text("Tanggal Lahir"),
           Birthday(focusName: nameFocus, focusPhone: phoneFocus),
           RegisterField(

@@ -2,21 +2,23 @@ import 'dart:convert';
 import 'dart:io';
 
 // import 'package:dio/dio.dart';
-import 'package:connectivity/connectivity.dart';
+// import 'package:connectivity/connectivity.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 // import 'package:image_cropper/image_cropper.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_gallery_camera/image_picker_gallery_camera.dart';
 import 'package:intl/intl.dart';
 import 'package:pikunikku/sources/api/API.dart';
+import 'package:pikunikku/sources/model/avoider.dart';
 import 'package:pikunikku/sources/model/kecamatan.dart';
 import 'package:pikunikku/sources/model/kota.dart';
 import 'package:pikunikku/sources/model/provinsi.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 // import 'package:pikunikku/sources/api/url.dart';
 // import 'package:http/http.dart';
 
@@ -136,15 +138,15 @@ class RegisterCubit extends Cubit<RegisterState> {
         style: TextStyle(color: Colors.black),
       ),
     );
-    // File? _croppedImage = await ImageCropper.cropImage(
-    //   sourcePath: _image.path,
-    //   aspectRatio: CropAspectRatio(
-    //     ratioX: 1,
-    //     ratioY: 1,
-    //   ),
-    // );
-    if (_image != null) {
-      emit(state.copyWith(image: File(_image.path)));
+    File? _croppedImage = await ImageCropper.cropImage(
+      sourcePath: _image.path,
+      aspectRatio: CropAspectRatio(
+        ratioX: 1,
+        ratioY: 1,
+      ),
+    );
+    if (_croppedImage != null) {
+      emit(state.copyWith(image: File(_croppedImage.path)));
     }
 
     // emit(state.copyWith(image: File(_croppedImage!.path)));
@@ -153,24 +155,25 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void registerMultipart(BuildContext context) async {
     // print(API.register.toString());
-    emit(state.copyWith(loading: true));
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult != ConnectivityResult.none) {
-      try {
+    Avoider avoider = Avoider();
+    avoider.catchException(
+      context: context,
+      functionBreak: () {
+        emit(state.copyWith(loading: false));
+      },
+      function: () async {
+        emit(state.copyWith(loading: true));
         var request = http.MultipartRequest('POST', API.register);
         // request.files.add(await http.MultipartFile.fromPath('picture', image.path));
         if (state.image != null) {
           request.files.add(
             http.MultipartFile.fromBytes(
               'picture',
-              File(state.image!.path).readAsBytesSync(),
-              filename: state.image!.path.split("/").last,
+              state.image!.readAsBytesSync(),
+              filename: state.image!.path,
             ),
           );
         }
-        // print(state.image!.path);
-        // print(state.image!.path.split("/").last);
-        // print("picture type :" + state.image!.runtimeType.toString());
         request.fields.addAll(
           {
             'nama': state.name.toString(),
@@ -178,7 +181,7 @@ class RegisterCubit extends Cubit<RegisterState> {
             'email': state.email,
             'password': state.confirmPassword,
             'alamat': state.address.toString(),
-            'kota': state.kota.toString(),
+            'kota': state.kota.toString() + "(${state.kecamatan.toString()})",
             'provinsi': state.provinsi.toString(),
             'kode_pos': state.kodePos.toString(),
             'tgl_lahir': DateFormat("yyyy-MM-dd")
@@ -187,65 +190,56 @@ class RegisterCubit extends Cubit<RegisterState> {
           },
         );
         var res = await request.send();
-
         var responseData = await res.stream.toBytes();
         var responseString = String.fromCharCodes(responseData);
-        // print(responseString);
-        final jsonData = jsonDecode(responseString);
-        if (res.statusCode == 200) {
-          if (jsonData["status"] == true) {
-            emit(state.copyWith(
-                status: jsonData["status"],
-                message: jsonData["msg"],
-                loading: false));
+        print(responseString);
+        if (responseString[0] == "{") {
+          final jsonData = jsonDecode(responseString);
+          if (res.statusCode == 200) {
+            if (jsonData["status"] == true) {
+              emit(state.copyWith(
+                  status: jsonData["status"],
+                  message: jsonData["msg"],
+                  loading: false));
+            } else {
+              emit(state.copyWith(
+                  status: jsonData["status"],
+                  message: jsonData["msg"],
+                  loading: false));
+            }
           } else {
             emit(state.copyWith(
                 status: jsonData["status"],
                 message: jsonData["msg"],
                 loading: false));
           }
-          // print(responseString);
-          // print(responseString.runtimeType);
         } else {
-          emit(state.copyWith(
-              status: jsonData["status"],
-              message: jsonData["msg"],
-              loading: false));
+          emit(state.copyWith(status: false, message: "gagal", loading: false));
         }
-        // var responseString = String.fromCharCodes(responseData);
-      } catch (exception, stackTrace) {
-        await Sentry.captureException(
-          exception,
-          stackTrace: stackTrace,
-        );
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(exception.toString())));
-        emit(state.copyWith(
-            loading: false, message: "Terjadi Kesalahan. Silahkan Coba Lagi."));
-      }
-    } else{
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Tidak ada koneksi internet")));
-      emit(state.copyWith(
-        loading: false,
-      ));
-    }
+      },
+    );
   }
 
-  void getProvinsi() async {
-    http.Response response;
-    response = await http.get(API.provinsi);
-    // print(jsonData);
-    final jsonData = jsonDecode(response.body.toString());
-    Map<String, dynamic> data = jsonData;
-    List<Provinsi> _listProvinsi = data.entries
-        .map((e) => Provinsi(id: e.key, provinsi: e.value))
-        .toList();
-    emit(state.copyWith(listProvince: _listProvinsi));
+  void getProvinsi(context) async {
+    Avoider avoider = Avoider();
+    avoider.catchException(
+        context: context,
+        function: () async {
+          http.Response response;
+          response = await http.get(API.provinsi);
+          // print(jsonData);
+          final jsonData = jsonDecode(response.body.toString());
+          Map<String, dynamic> data = jsonData;
+          List<Provinsi> _listProvinsi = data.entries
+              .map((e) => Provinsi(id: e.key, provinsi: e.value))
+              .toList();
+          emit(state.copyWith(listProvince: _listProvinsi));
+        });
   }
 
-  void getKota() async {
-    // emit(state.copyWith(listCity: []));
+  void getKota(context) async {
+    Avoider avoider = Avoider();
+    avoider.catchException(context: context, function: () {});
     http.Response response;
     response = await http.get(API.kota(state.province!.id.toString()));
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -259,24 +253,28 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
   }
 
-  void getKecamatan() async {
-    // emit(state.copyWith(listUniqueKecamatan: []));
-    http.Response response;
-    response = await http.get(API.kecamatan(state.city!.id.toString()));
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonData = jsonDecode(response.body.toString());
-      print(jsonData);
-      List<Kecamatan> _listKecamatan = [];
-      List<String> _listUnique = [];
-      for (var item in jsonData) {
-        Kecamatan kec = Kecamatan.fromJson(item);
-        _listKecamatan.add(kec);
-        _listUnique.add(kec.kecamatan.toString());
-      }
-      emit(state.copyWith(
-          listUniqueKecamatan: _listUnique.toSet().toList(),
-          listKecamatan: _listKecamatan));
-    }
+  void getKecamatan(context) async {
+    Avoider avoider = Avoider();
+    avoider.catchException(
+        context: context,
+        function: () async {
+          http.Response response;
+          response = await http.get(API.kecamatan(state.city!.id.toString()));
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            final jsonData = jsonDecode(response.body.toString());
+            print(jsonData);
+            List<Kecamatan> _listKecamatan = [];
+            List<String> _listUnique = [];
+            for (var item in jsonData) {
+              Kecamatan kec = Kecamatan.fromJson(item);
+              _listKecamatan.add(kec);
+              _listUnique.add(kec.kecamatan.toString());
+            }
+            emit(state.copyWith(
+                listUniqueKecamatan: _listUnique.toSet().toList(),
+                listKecamatan: _listKecamatan));
+          }
+        });
   }
 
   void getKelurahan() {
@@ -320,7 +318,7 @@ class RegisterCubit extends Cubit<RegisterState> {
                     kelurahan: "",
                     kodePos: "",
                   ));
-                  getKota();
+                  getKota(context);
                   Navigator.of(context).pop();
                 },
               ),
@@ -356,7 +354,7 @@ class RegisterCubit extends Cubit<RegisterState> {
                     kelurahan: "",
                     kodePos: "",
                   ));
-                  getKecamatan();
+                  getKecamatan(context);
                   Navigator.of(context).pop();
                 },
               ),

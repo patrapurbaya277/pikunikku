@@ -24,80 +24,105 @@ class TourState extends Equatable {
 
   TourState({
     this.singleTour,
-
     this.allTour,
-    this.allTourLength:0,
-
+    this.allTourLength: 0,
     this.listTourDekatRumah,
-    this.listTourDekatRumahLength:0,
-
+    this.listTourDekatRumahLength: 0,
     this.listTourPergiJauh,
-    this.listTourPergiJauhLength:0,
-
-    this.loadingData:false,
-    this.successGetData=false,
-
-    this.loadingPaket=false,
+    this.listTourPergiJauhLength: 0,
+    this.loadingData: false,
+    this.successGetData = false,
+    this.loadingPaket = false,
     this.listPaket,
     this.selectedListPaket,
     this.selectedPaket,
     // this.filter,
-    this.hasFilteredData=false,
-    
+    this.hasFilteredData = false,
   });
 
   @override
-  List<Object?> get props =>
-      [singleTour, allTour, listTourPergiJauh, listTourDekatRumah, allTourLength, listTourPergiJauhLength,listTourPergiJauhLength, loadingData, successGetData,listPaket, selectedPaket, selectedListPaket,
-      // filter,
-      hasFilteredData,
-      loadingPaket,
+  List<Object?> get props => [
+        singleTour,
+        allTour,
+        listTourPergiJauh,
+        listTourDekatRumah,
+        allTourLength,
+        listTourPergiJauhLength,
+        listTourPergiJauhLength,
+        loadingData,
+        successGetData,
+        listPaket,
+        selectedPaket,
+        selectedListPaket,
+        // filter,
+        hasFilteredData,
+        loadingPaket,
       ];
+  TourState resetSingle() => TourState(
+        singleTour: null,
+
+        allTour: this.allTour,
+        allTourLength: this.allTourLength,
+
+        listTourDekatRumah: this.listTourDekatRumah,
+        listTourDekatRumahLength: this.listTourDekatRumahLength,
+
+        listTourPergiJauh: this.listTourPergiJauh,
+        listTourPergiJauhLength:
+            this.listTourPergiJauhLength,
+
+        loadingData: this.loadingData,
+        successGetData: this.successGetData,
+
+        listPaket: this.listPaket,
+        selectedPaket: this.selectedPaket,
+        selectedListPaket: this.selectedListPaket,
+        loadingPaket: this.loadingPaket,
+        // filter:filter??this.filter,
+        hasFilteredData: this.hasFilteredData,
+      );
 
   TourState copyWith({
     Tour? singleTour,
-
     List<Tour>? allTour,
     int? allTourLength,
-
     List<Tour>? listTourDekatRumah,
     int? listTourDekatRumahLength,
-
     List<Tour>? listTourPergiJauh,
     int? listTourPergiJauhLength,
-
     bool? loadingData,
     bool? successGetData,
-
     List<Paket>? listPaket,
     List<Paket>? selectedListPaket,
     Paket? selectedPaket,
     bool? loadingPaket,
-    String? filter, 
+    String? filter,
     bool? hasFilteredData,
     // bool? hasFilteredData,
   }) =>
       TourState(
-        singleTour: singleTour??this.singleTour,
-        
-        allTour: allTour??this.allTour,
-        allTourLength: allTourLength??this.allTourLength,
+        singleTour: singleTour ?? this.singleTour,
 
-        listTourDekatRumah: listTourDekatRumah??this.listTourDekatRumah,
-        listTourDekatRumahLength: listTourDekatRumahLength??this.listTourDekatRumahLength,
+        allTour: allTour ?? this.allTour,
+        allTourLength: allTourLength ?? this.allTourLength,
 
-        listTourPergiJauh: listTourPergiJauh??this.listTourPergiJauh,
-        listTourPergiJauhLength: listTourPergiJauhLength??this.listTourPergiJauhLength,
+        listTourDekatRumah: listTourDekatRumah ?? this.listTourDekatRumah,
+        listTourDekatRumahLength:
+            listTourDekatRumahLength ?? this.listTourDekatRumahLength,
 
-        loadingData: loadingData??this.loadingData,
-        successGetData: successGetData??this.successGetData,
+        listTourPergiJauh: listTourPergiJauh ?? this.listTourPergiJauh,
+        listTourPergiJauhLength:
+            listTourPergiJauhLength ?? this.listTourPergiJauhLength,
 
-        listPaket: listPaket??this.listPaket,
-        selectedPaket: selectedPaket??this.selectedPaket,
-        selectedListPaket: selectedListPaket??this.selectedListPaket,
-        loadingPaket: loadingPaket??this.loadingPaket,
+        loadingData: loadingData ?? this.loadingData,
+        successGetData: successGetData ?? this.successGetData,
+
+        listPaket: listPaket ?? this.listPaket,
+        selectedPaket: selectedPaket ?? this.selectedPaket,
+        selectedListPaket: selectedListPaket ?? this.selectedListPaket,
+        loadingPaket: loadingPaket ?? this.loadingPaket,
         // filter:filter??this.filter,
-        hasFilteredData: hasFilteredData??this.hasFilteredData,
+        hasFilteredData: hasFilteredData ?? this.hasFilteredData,
       );
 
   @override

@@ -19,7 +19,7 @@ class TourOnePage extends StatefulWidget {
 class _TourOnePageState extends State<TourOnePage> {
   @override
   Widget build(BuildContext context) {
-    context.read<TourCubit>().getAllData();
+    context.read<TourCubit>().getAllTour(context);
     return BlocBuilder<TourCubit, TourState>(
       builder: (context,state) {
         return Scaffold(

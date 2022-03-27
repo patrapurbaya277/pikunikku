@@ -7,6 +7,7 @@ class User {
         required this.noHp,
         required this.email,
         // required this.emailVerifiedAt,
+        required this.isVerified,
         required this.password,
         required this.createdAt,
         required this.updatedAt,
@@ -28,6 +29,7 @@ class User {
     String nama;
     String noHp;
     String email;
+    bool isVerified;
     // DateTime emailVerifiedAt;
     String password;
     DateTime createdAt;
@@ -50,11 +52,12 @@ class User {
         nama: json["nama"],
         noHp: json["no_hp"],
         email: json["email"],
+        isVerified: json["email_verified_at"]!=null?true:false,
         // emailVerifiedAt: DateTime.parse(json["email_verified_at"]),
         password: json["password"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        alamat: json["alamat"],
+        alamat: json["alamat"]??"",
         kota: json["kota"],
         provinsi: json["provinsi"],
         kodePos: json["kode_pos"],
@@ -73,6 +76,7 @@ class User {
         "nama": nama,
         "no_hp": noHp,
         "email": email,
+        "isVerified": isVerified,
         // "email_verified_at": emailVerifiedAt.toIso8601String(),
         "password": password,
         "created_at": createdAt.toIso8601String(),

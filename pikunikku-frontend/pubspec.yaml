@@ -48,6 +48,9 @@ dependencies:
   # flutter_html: ^2.2.1
   flutter_widget_from_html_core: ^0.8.4
   connectivity: ^3.0.6
+  url_launcher: ^6.0.18
+  dotted_line: ^3.1.0
+  font_awesome_flutter: ^9.2.0
 
 
 

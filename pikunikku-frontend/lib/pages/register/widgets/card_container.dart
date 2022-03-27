@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CardContainer extends StatelessWidget {
+  final CrossAxisAlignment? alignment;
   final List<Widget> children;
-  const CardContainer({Key? key, required this.children}) : super(key: key);
+  final BorderRadius? borderRadius;
+  const CardContainer({Key? key, required this.children, this.borderRadius, this.alignment}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class CardContainer extends StatelessWidget {
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: borderRadius??BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
@@ -26,6 +28,7 @@ class CardContainer extends StatelessWidget {
         ],
       ),
       child: Column(
+        crossAxisAlignment: alignment==null?CrossAxisAlignment.center:alignment!,
         children: children,
       ),
     );
